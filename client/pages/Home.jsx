@@ -3,6 +3,7 @@ import Navbar from '../components/Navbar.jsx';
 import Apicard from '../components/Apicard.jsx';
 import './Home.scss';
 import { useNavigate, useParams } from 'react-router-dom';
+import SearchBar from '../components/SearchBar.jsx'
 
 const actions = {
   SHOW_OVERLAY: 'SHOW_OVERLAY',
@@ -29,7 +30,7 @@ const overlayStateInit = {
 const overlayStateReducer = (state, action) => {
   switch (action.type) {
     case actions.SHOW_OVERLAY: {
-      return { ...state, visible: true};
+      return { ...state, visible: true };
     }
     case actions.NAME_INPUT: {
       return { ...state, apiName: action.payload };
@@ -141,10 +142,10 @@ const Home = () => {
               const data = await response.json();
               console.log('success');
               console.log('data returned', data);
-              if(data.length > overlayState.apiData.length) {
-              overlayDispatch({ type: actions.NEW_DATA, payload: data });
-            }
-            overlayDispatch({ type: actions.EXIT });
+              if (data.length > overlayState.apiData.length) {
+                overlayDispatch({ type: actions.NEW_DATA, payload: data });
+              }
+              overlayDispatch({ type: actions.EXIT });
             } catch (err) {
               console.log('Error occurred submitting data to backend');
             }
@@ -227,24 +228,22 @@ const MainHeader = () => {
               </div>
             </div>
             <div className='input-container'>
-              <input
-                type='text'
-                className='input-bar-home'
-                placeholder='Search APIs...'
+              <SearchBar
+                
               />
             </div>
           </div>
           {visible && (
             <div className='overlay'>
-              
+
               <div className='overlay-content'>
                 <div>
-                  
+
                   <form>
                     <div className='formGroup'>
-                    <button className = 'exitButton' onClick={() => {
-                      dispatch({ type: actions.EXIT});
-                    }}>X</button>
+                      <button className='exitButton' onClick={() => {
+                        dispatch({ type: actions.EXIT });
+                      }}>X</button>
                       <h2>Add Tech</h2>
                       <input
                         type='text'
