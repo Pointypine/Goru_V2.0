@@ -68,7 +68,7 @@ postController.makePost = async (req, res, next) => {
         languageid,
         comment,
       ]
-    );    
+    );  
     // This could get PostId for confirmation and potentially better communication w/ front end
     return next();
   } catch (err) {
