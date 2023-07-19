@@ -51,11 +51,11 @@ router.put(
 
 // Add new Post to the database
 router.post(
-  '/',
+  '/:id',
   // userController.authenticate, // skipped for testing
-  postController.makePost, 
+  postController.makePost, postController.findPostsByTech,
   (req, res) => {
-    res.status(200).json(res.locals.foundData);
+    res.status(200).json(res.locals.postList);
   }
 );
 

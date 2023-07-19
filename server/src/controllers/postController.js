@@ -48,18 +48,6 @@ postController.makePost = async (req, res, next) => {
     comment,  
   } = req.body;
   console.log(title, tech_id, uploader_id, typeReview, typeAdvice, typeCodeSnippet, typeHelpOffer, languageid, comment)
-  // {
-  //   "title": "Youtube",
-  //   "tech_id": 4, 
-  //   "uploader_id": 0,
-  //   "typeReview": false,
-  //   "typeAdvice": false,
-  //   "typeCodeSnippet": false,
-  //   "typeHelpOffer": false,
-  //   "languageid": 5,
-  //   "comment": "hello",
-  //   "image": "hello"
-  // }
   // retreive tech id, uploader id, and language id
   // code
   

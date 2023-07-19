@@ -70,8 +70,8 @@ const Comments = () => {
   //to find id of our url
   const { id } = useParams();
 
-  const addComment = async () => {
-    event.preventDefault();
+  const addComment = async (e) => {
+    e.preventDefault();
     console.log(id, titleEntry, entry, image);
     try {
       setShowOverlay(false);
@@ -81,22 +81,20 @@ const Comments = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-
         body: JSON.stringify({
           // userId: number, found via backend
-
+          title: titleEntry,
           tech_id: id,
+          uploader_id: 0,
           typeReview: false,
           typeAdvice: false,
           typeCodeSnippet: false,
           typeHelpOffer: false,
           languageid: 1,
-          title: titleEntry,
-          comment: entry,
-          image: image,
+          comment: "entry",
         }),
       });
-
+      console.log('sending')
       const data = await response.json();
       console.log('success');
       console.log('data returned', data);
@@ -161,7 +159,7 @@ const Comments = () => {
             <div>{item.title}</div>
             <div className="details">
               <p className="username">{item.username}</p>
-              <p className="tags">Posted by: Steve</p>
+              <p className="tags">Posted by: Stab-Rabbit</p>
             </div>
           </div>
         </div>
