@@ -19,6 +19,7 @@ postController.findPost = async (req, res, next) => {
     }
     console.log('Retrieved post lookup: ', rows[0]);
     res.locals.postRequest = rows[0];
+    console.log('postreq: ', res.locals.postRequest);
     next();
   } catch (err) {
     return next({
@@ -129,7 +130,7 @@ postController.editPost = async (req, res, next) => {
     return next();
   } catch (err) {
     return next({
-      log: 'Encountered lookup error in postController.deletePost',
+      log: 'Encountered lookup error in postController.updatePost',
       message: { err: 'Lookup error.' },
     });
   }  
@@ -140,6 +141,7 @@ postController.deletePost = async (req, res, next) => {
   // Delete the post from the database by databaseId.
   const postId = req.params.id
   console.log(postId)
+  console.log('we hit deletePost')
   const lookupText = 'DELETE FROM posts WHERE post_id = $1'
   const lookupVal = [postId]
   try {
