@@ -128,7 +128,7 @@ const Comments = () => {
   for (let index = 0; index < state.comments.length; index++) {
     const activeIndex = state.accordianIndexExpanded;
     const item = state.comments[index];
-
+    
     comments.push(
       <div
         key={index}
@@ -216,7 +216,7 @@ const MainHeader = () => {
                     onClick={() => {
                       dispatch({ type: actions.EXIT_OVERLAY });
                     }}>
-                    X
+                    X 
                   </button>
                   <Form />
                 </div>
