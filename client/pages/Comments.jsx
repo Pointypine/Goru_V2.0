@@ -12,6 +12,8 @@ import {
   commentsPageReducer,
 } from '../reducers/commentsPageReducers.jsx';
 
+import { UserContext } from '../contexts/contexts.jsx';
+
 const StateContext = createContext();
 const FormContext = createContext();
 const DispatchContext = createContext();
@@ -24,6 +26,8 @@ const Comments = () => {
     commentsPageReducer,
     commentsPageStateInit,
   );
+
+  const userState = useContext(UserContext);
 
   // initial page load
   useEffect(() => {
@@ -128,7 +132,6 @@ const Comments = () => {
   for (let index = 0; index < state.comments.length; index++) {
     const activeIndex = state.accordianIndexExpanded;
     const item = state.comments[index];
-
     comments.push(
       <div
         key={index}
@@ -144,7 +147,7 @@ const Comments = () => {
             <div>{item.title}</div>
             <div className='details'>
               <p className='username'>{item.username}</p>
-              <p className='tags'>Posted by: Steve</p>
+              <p className='tags'>Posted by user {item.uploader}</p>
             </div>
           </div>
         </div>
