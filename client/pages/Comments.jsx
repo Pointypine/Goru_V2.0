@@ -3,6 +3,7 @@ import { Editor } from '@tinymce/tinymce-react';
 import { useParams } from 'react-router-dom';
 import './Comments.scss';
 import Navbar from '../components/Navbar.jsx';
+import parse from 'html-react-parser';
 import HelperFunctions from '../helper-functions';
 
 import {
@@ -150,9 +151,7 @@ const Comments = () => {
         {index === activeIndex && (
           <div className='accordion-content'>
             <div>
-              <div className='experience'>
-                {HelperFunctions.md(item.comment)}
-              </div>
+              <div className='experience'>{parse(item.comment)}</div>
               <img src={item.image} alt='Image' className='accordion-image' />
             </div>
           </div>
@@ -268,6 +267,7 @@ const Form = () => {
             apiKey='ba2mzqsjqzq6lv0fu4numgypg3j9125otxy4rpzttx7vji3q'
             className='custom-editor'
             onEditorChange={(value, editor) => {
+              console.log(value);
               dispatch({
                 type: actions.FORM_INPUT,
                 payload: { formVar: 'editor', input: value },
