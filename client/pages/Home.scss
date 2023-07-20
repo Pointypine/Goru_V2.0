@@ -1,10 +1,13 @@
-$blue4: #112d4e;
-$blue3: #3f72af;
-$blue2: #dbe2ef;
-$blue1: #f9f7f7;
+@import url('https://fonts.googleapis.com/css2?family=Cabin&family=Oswald:wght@300&display=swap');
+
+$color1: #edede9;
+$color2: #d6ccc2;
+$color3: #f5ebe0;
+$color4: #e3d5ca;
+$color5: #d5bdaf;
 
 #root {
-  background-color: $blue2;
+  background-color: $color4;
 }
 
 .pageMaterial {
@@ -60,7 +63,7 @@ $blue1: #f9f7f7;
   padding: 40px;
   box-shadow: 0 2px 5px rgba(179, 179, 179, 0.3);
   color: white;
-  background-color: $blue4;
+  background-color: $color1;
   width: 480px;
   height: 420px;
   &:hover {
@@ -80,8 +83,8 @@ $blue1: #f9f7f7;
 }
 
 .exitButton {
-  top:0;
-  right:0;
+  top: 0;
+  right: 0;
 }
 
 .formGroup-2 {
@@ -169,7 +172,7 @@ $blue1: #f9f7f7;
   font-size: 16px;
   font-weight: bold;
   text-transform: uppercase;
-  background-color: #4caf50;
+  background-color: $color4;
   color: #fff;
   border: none;
   border-radius: 5px;
@@ -207,7 +210,7 @@ $blue1: #f9f7f7;
 
 .box {
   display: flex;
-  background-color: #f1f1f1;
+  background-color: $color1;
   padding: 20px;
   flex-direction: column;
   width: 315px;

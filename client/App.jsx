@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useReducer } from 'react';
 import ReactDOM from 'react';
 // import helperFunctions from './helper-functions.js';
-import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom';
+import { BrowserRouter, Router, Route, Routes, Navigate } from 'react-router-dom';
 //add containers and requirements for JS
 import Navbar from './components/Navbar.jsx';
 import Home from './pages/Home.jsx';
