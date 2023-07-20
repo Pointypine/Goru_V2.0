@@ -120,8 +120,7 @@ userController.authenticate = async (req, res, next) => {
 
     res.locals.userId = userResult.rows[0].user_id;
 
-    console.log('UserId saved');
-
+    console.log('UserId saved');    
     return next();
   } catch (err) {
     console.log('Error while authenticating user:', err);

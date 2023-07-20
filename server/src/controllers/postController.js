@@ -139,6 +139,7 @@ postController.deletePost = async (req, res, next) => {
   // An authorized/authenticated user wants to delete their post (res.locals.postRequest)
   // Delete the post from the database by databaseId.
   const postId = req.params.id
+  console.log(postId)
   const lookupText = 'DELETE FROM posts WHERE post_id = $1'
   const lookupVal = [postId]
   try {
