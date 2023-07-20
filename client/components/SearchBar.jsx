@@ -1,16 +1,19 @@
 import React, { useRef, useContext, useEffect } from 'react';
 import { Button, TextField } from '@mui/material';
-import { OverlayDispatchContext, OverlayFormContext } from '../pages/Home.jsx';
+import {
+  DispatchContext as OverlayDispatchContext,
+  StateContext as OverlayFormContext,
+} from '../contexts/contexts.jsx';
 
 export default function SearchBar(props) {
   const query = useRef();
   const dispatch = useContext(OverlayDispatchContext);
-  const handleSearch = async (e) => {
+  const handleSearch = async e => {
     // const dispatch = useContext(OverlayDispatchContext); // you may need to import the context
     // which may mean we want the contexts to be in a separate file to import in home as well
 
     e.preventDefault();
-    const queryVal = query.current.value;
+    let queryVal = query.current.value;
     queryVal = queryVal.replace(/\s/g, '+');
     console.log('queryVal', queryVal);
     // fetch(`/api/tech/search/?keywords=${queryVal}`,
@@ -34,16 +37,16 @@ export default function SearchBar(props) {
   };
 
   return (
-    <form onSubmit={handleSearch} className="search-bar">
+    <form onSubmit={handleSearch} className='search-bar'>
       <TextField
-        className="search-bar"
-        label="Search apis"
-        variant="outlined"
-        placeholder="Search for Api..."
+        className='search-bar'
+        label='Search apis'
+        variant='outlined'
+        placeholder='Search for Api...'
         required={true}
         inputRef={query}
       />
-      <Button className="searchBtn" variant="outlined" type="submit">
+      <Button className='searchBtn' variant='outlined' type='submit'>
         Search
       </Button>
     </form>
