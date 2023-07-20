@@ -150,9 +150,15 @@ userController.authenticate = async (req, res, next) => {
 };
 
 userController.authorizeEdit = (req, res, next) => {
+  console.log('postreq:', res.locals.postRequest);
+  console.log('in auth edit');
   // Here to edit or delete. Verify that they have a valid session and that User_ID is the author of req/params/id. If not, error.
-  const postAuthorId = req.locals.postRequest.userId;  
-  if (req.cookies('SSID') === postAuthorId || res.cookies('SSID') === postAuthorId) {
+  const postAuthorId = res.locals.postRequest.uploader;  //changed to uploader to match whats in db
+  console.log('postAuthorId:', postAuthorId);
+  console.log('cookies:', req.cookies.SSID);
+  
+  // console.log('cookies:', req.cookies.userId);  
+  if (Number(req.cookies.SSID) === postAuthorId) {
     // User is authorized to edit or delete their own post
     next();
   } else {
