@@ -13,6 +13,9 @@
 }
 .details {
   display: flex;
+  flex-wrap: wrap;
+  flex-direction: column;
+  font: Courier; 
 }
 
 .acc-footer {
