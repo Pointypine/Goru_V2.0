@@ -72,7 +72,7 @@ const Comments = () => {
             languageid: 1, // hard-coded : need parsing for language here
             comment: editor, // hard code this if not working
             tech_id: id,
-            uploader_id: 0,
+            // uploader_id: 0,
             typeReview: false,
             typeAdvice: false,
             typeCodeSnippet: false,
