@@ -5,70 +5,16 @@ import './Home.scss';
 import { useNavigate, useParams } from 'react-router-dom';
 import SearchBar from '../components/SearchBar.jsx';
 
-const actions = {
-  SHOW_OVERLAY: 'SHOW_OVERLAY',
-  NAME_INPUT: 'NAME_INPUT',
-  URL_INPUT: 'URL_INPUT',
-  IMAGE_URL_INPUT: 'IMAGE_URL_INPUT',
-  DESCRIPTION_INPUT: 'DESCRIPTION_INPUT',
-  SUBMIT: 'SUBMIT',
-  LOAD: 'LOAD',
-  NEW_DATA: 'NEW_DATA',
-  EXIT: 'EXIT',
-};
+import {
+  homePageActions as actions,
+  homePageStateInit as overlayStateInit,
+  homePageReducer as overlayStateReducer,
+} from '../reducers/homePageReducers.jsx';
 
-const overlayStateInit = {
-  visible: false,
-  loading: 'idle',
-  apiName: '',
-  apiUrl: '',
-  apiDescription: '',
-  apiImageUrl: '',
-  apiData: [],
-};
-
-const overlayStateReducer = (state, action) => {
-  switch (action.type) {
-    case actions.SHOW_OVERLAY: {
-      return { ...state, visible: true };
-    }
-    case actions.NAME_INPUT: {
-      return { ...state, apiName: action.payload };
-    }
-    case actions.URL_INPUT: {
-      return { ...state, apiUrl: action.payload };
-    }
-    case actions.IMAGE_URL_INPUT: {
-      return { ...state, apiImageUrl: action.payload };
-    }
-    case actions.DESCRIPTION_INPUT: {
-      return { ...state, apiDescription: action.payload };
-    }
-    case actions.LOAD: {
-      return { ...state, loading: 'load' };
-    }
-    case actions.SUBMIT: {
-      return { ...state, loading: 'submit' };
-    }
-    case actions.NEW_DATA: {
-      return { ...state, loading: 'idle', apiData: action.payload };
-    }
-    case actions.EXIT: {
-      return {
-        ...state,
-        visible: false,
-        apiName: '',
-        apiUrl: '',
-        apiDescription: '',
-        apiImageUrl: '',
-      };
-    }
-    default:
-      return state;
-  }
-};
-export const OverlayDispatchContext = createContext();
-export const OverlayFormContext = createContext();
+import {
+  StateContext as OverlayFormContext,
+  DispatchContext as OverlayDispatchContext,
+} from '../contexts/contexts.jsx';
 
 const Home = () => {
   const [overlayState, overlayDispatch] = useReducer(
@@ -92,7 +38,7 @@ const Home = () => {
 
   // loading state changed: making a fetch IF NOT IDLE
   useEffect(() => {
-    const { loading, apiImageURL, apiDescription, apiName, apiUrl } =
+    const { loading, apiImageUrl, apiDescription, apiName, apiUrl, apiData } =
       overlayState;
     switch (loading) {
       case 'load':
@@ -127,28 +73,35 @@ const Home = () => {
                 },
                 body: JSON.stringify({
                   name: apiName,
-                  link: apiURL,
-
-                  image: apiImageURL,
+                  link: apiUrl,
+                  image: apiImageUrl,
                   typeApi: false,
                   typeFramework: false,
                   typeLibrary: false,
                   description: apiDescription,
-                  keywords: ['maps'],
                 }),
               });
-
-              const data = await response.json();
               console.log('success');
-              console.log('data returned', data);
-              if (data.length > overlayState.apiData.length) {
+              if (response.status === 200) {
+                const data = apiData.slice();
+                data.push({
+                  name: apiName,
+                  link: apiUrl,
+                  image: apiImageUrl,
+                  typeApi: false,
+                  typeFramework: false,
+                  typeLibrary: false,
+                  description: apiDescription,
+                });
                 overlayDispatch({ type: actions.NEW_DATA, payload: data });
               }
               overlayDispatch({ type: actions.EXIT });
             } catch (err) {
               console.log('Error occurred submitting data to backend');
+              overlayDispatch({ type: actions.FETCH_ERR, payload: err });
             }
           };
+          fetchData();
         }
         break;
 
@@ -169,32 +122,33 @@ const Home = () => {
 
 const ApisContainer = ({ comments }) => {
   const { apiData } = useContext(OverlayFormContext);
-  const renderBox = () => {
-    return apiData.map((item, index) => {
-      return (
-        <div className='box' key={index}>
-          <div className='image-container'>
-            <img src={item.image_url} alt='Tech' className='api-image' />
-          </div>
-          <div className='api-content'>
-            <a href={item.link} className='tech-item-name'>
-              {item.name}
-            </a>
-            <p>{item.description}</p>
-            <div className='button-comment'>
-              <button onClick={comments} id={item.tech_id}>
-                Posts
-              </button>
-            </div>
+  const renderBox = [];
+  for (let index = 0; index < apiData.length; index++) {
+    const item = apiData[index];
+    renderBox.push(
+      <div className='box' key={index}>
+        <div className='image-container'>
+          <img src={item.image_url} alt='Tech' className='api-image' />
+        </div>
+        <div className='api-content'>
+          <a href={item.link} className='tech-item-name'>
+            {item.name}
+          </a>
+          <p>{item.description}</p>
+          <div className='button-comment'>
+            <button onClick={comments} id={item.tech_id}>
+              Posts
+            </button>
           </div>
         </div>
-      );
-    });
-  };
+      </div>,
+    );
+  }
+
   return (
     <div className='one'>
       <div className='scroll-container'>
-        <div className='grid-container'>{renderBox()}</div>
+        <div className='grid-container'>{renderBox}</div>
       </div>
     </div>
   );
@@ -302,8 +256,9 @@ const MainHeader = () => {
                     <div className='btn'>
                       <button
                         className='login-button'
-                        onClick={() => {
-                          dispatch({ type: 'SUBMIT' });
+                        onClick={e => {
+                          e.preventDefault();
+                          dispatch({ type: actions.SUBMIT });
                         }}>
                         Submit!
                       </button>
