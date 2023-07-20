@@ -59,8 +59,10 @@ router.get(
   }
 );
 
-router.delete('/:id', techController.deleteTech, (req, res) => {
-  res.sendStatus(200);
+router.delete('/:id', 
+  techController.deleteTech, 
+  (req, res) => {
+    res.sendStatus(200);
 });
 
 
