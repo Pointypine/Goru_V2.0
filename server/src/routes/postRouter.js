@@ -30,7 +30,7 @@ router.put(
   '/edit/:id',
   postController.findPost,
   // userController.authenticate,
-  // userController.authorizeEdit,
+  userController.authorizeEdit,
   postController.editPost,
   (req, res) => {
     res.status(200).send();
@@ -42,7 +42,7 @@ router.put(
   '/delete/:id',
   postController.findPost,
   // userController.authenticate,
-  // userController.authorizeEdit,
+  userController.authorizeEdit,
   postController.deletePost,
   (req, res) => {
     res.status(200).send(res.locals.updatedRow);
