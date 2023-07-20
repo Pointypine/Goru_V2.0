@@ -31,7 +31,11 @@ router.post(
     // send back username, maybe contact?, cookie?
     res
       .status(200)
-      .json({ message: 'Login successful!', username: res.locals.username });
+      .json({
+        message: 'Login successful!',
+        username: res.locals.username,
+        id: res.locals.userId,
+      });
   },
 );
 

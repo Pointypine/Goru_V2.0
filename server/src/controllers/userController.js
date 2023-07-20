@@ -81,12 +81,11 @@ userController.endSession = (req, res, next) => {
 
 // works with checking hashed pw
 userController.authenticate = async (req, res, next) => {
-  console.log(req.cookies)
-
   // If they have a valid session already, next()
   if (req.cookies.SSID && req.cookies.SSID !== 'undefined') {
     let name = req.body.username;
     if (!name) {
+      res.locals.userId = req.cookies.SSID;
       const query = await db.query(
         `
         SELECT name FROM users WHERE user_id = $1;
@@ -113,7 +112,7 @@ userController.authenticate = async (req, res, next) => {
       WHERE name = $1`,
       [username],
     );
-    // if user exists error    
+    // if user exists error
     if (userResult.rows.length === 0) {
       return next({
         log: 'usercontroller.authenticate: Invalid username or password',
@@ -133,11 +132,11 @@ userController.authenticate = async (req, res, next) => {
       });
     }
 
-    console.log('passwords match!')
+    console.log('passwords match!');
 
     res.locals.userId = userResult.rows[0].user_id;
 
-    console.log('UserId saved');    
+    console.log('UserId saved');
     return next();
   } catch (err) {
     console.log('Error while authenticating user:', err);
@@ -153,11 +152,11 @@ userController.authorizeEdit = (req, res, next) => {
   console.log('postreq:', res.locals.postRequest);
   console.log('in auth edit');
   // Here to edit or delete. Verify that they have a valid session and that User_ID is the author of req/params/id. If not, error.
-  const postAuthorId = res.locals.postRequest.uploader;  //changed to uploader to match whats in db
+  const postAuthorId = res.locals.postRequest.uploader; //changed to uploader to match whats in db
   console.log('postAuthorId:', postAuthorId);
   console.log('cookies:', req.cookies.SSID);
-  
-  // console.log('cookies:', req.cookies.userId);  
+
+  // console.log('cookies:', req.cookies.userId);
   if (Number(req.cookies.SSID) === postAuthorId) {
     // User is authorized to edit or delete their own post
     next();

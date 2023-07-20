@@ -41,7 +41,7 @@ const Login = props => {
             } else {
               userDispatch({
                 type: userStateActions.LOGIN_SUCCESS,
-                payload: username,
+                payload: { username, id: data.id },
               });
             }
             setUsername('');

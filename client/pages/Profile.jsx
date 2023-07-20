@@ -19,7 +19,7 @@ const Profile = props => {
           </div>
           <div className='profile_name'>
             Name
-            <div className='profile_text'>FETCHED name here</div>
+            <div className='profile_text'>{userState.username}</div>
           </div>
           <div className='profile_password'>
             Password

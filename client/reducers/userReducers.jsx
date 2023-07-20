@@ -9,6 +9,7 @@ export const userStateActions = {
 
 export const userStateInit = {
   username: '',
+  id: null,
   newUser: false,
   loggedIn: false,
   loading: 'idle',
@@ -26,8 +27,8 @@ export const userStateReducer = (state, action) => {
       return { ...state, loading: 'check_session' };
     }
     case userStateActions.LOGIN_SUCCESS: {
-      const { username } = action.payload;
-      return { ...state, username, loggedIn: true, loading: 'idle' };
+      const { username, id } = action.payload;
+      return { ...state, username, id, loggedIn: true, loading: 'idle' };
     }
     case userStateActions.LOGOUT_SUCCESS: {
       return userStateInit;
