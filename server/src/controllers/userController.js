@@ -65,6 +65,9 @@ userController.makeUser = async (req, res, next) => {
 userController.newSession = (req, res, next) => {
   // Here after creating or authenticating. Make a new 1.5 minute session and send them cookies.
   // http enhances security by making cookies only accessible server side
+  if (req.cookies.SSID) {
+    return next();
+  }
   const hours = 1;
   const maxAgeInMs = hours * 60 * 60 * 1000;
   res.cookie('SSID', res.locals.userId, { maxAge: maxAgeInMs, httpOnly: true });
@@ -81,7 +84,21 @@ userController.authenticate = async (req, res, next) => {
   console.log(req.cookies)
 
   // If they have a valid session already, next()
-  if (req.cookies.SSID) return next();
+  if (req.cookies.SSID && req.cookies.SSID !== 'undefined') {
+    let name = req.body.username;
+    if (!name) {
+      const query = await db.query(
+        `
+        SELECT name FROM users WHERE user_id = $1;
+        `,
+        [req.cookies.SSID],
+      );
+      console.log(query);
+      name = query.rows[0].name;
+    }
+    res.locals.username = name;
+    return next();
+  }
 
   //need to store sessions in data base. need to compare ssid with val in database
   // If they don't have a valid session, check req.body for username + password

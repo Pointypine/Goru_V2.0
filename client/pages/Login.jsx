@@ -4,7 +4,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 //add containers and requirements for JS
 import Navbar from '../components/Navbar.jsx';
 
-import { UserDispatchContext } from '../contexts/contexts.jsx';
+import { UserDispatchContext, UserContext } from '../contexts/contexts.jsx';
 import { userStateActions } from '../reducers/userReducers.jsx';
 
 const Login = props => {
@@ -14,121 +14,45 @@ const Login = props => {
   const [password, setPassword] = useState('');
 
   const userDispatch = useContext(UserDispatchContext);
+  const userState = useContext(UserContext);
 
-  //
-  //when someone puts in their form info, handle a login request
-  // const handleLogin = async e => {
-  //   console.log('Event Data: ', e);
-  //   //make a fetch request to the server to post a username and password login
-  //   const un = e.target.username;
-  //   const pw = e.target.password;
-  //   //check if new user is toggled
-  //   const newUser = e.target.new_user;
-  //   if (!newUser) {
-  //     //-->login request (NOT a new user)
-  //     const url = path.resolve(__dirName, '/api/user/login');
-  //     //if good match, post back the home page with access to create an api
-  //     //else bad match, post back a toggle which shows div "username or password invalid"
-  //     await fetch('dummy', {
-  //       method: 'POST',
-  //       body: JSON.stringify({
-  //         username: un,
-  //         password: pw,
-  //       }),
-  //     })
-  //       .then(res => {
-  //         //convert with json
-  //         res.json();
-  //       })
-  //       .then(resObj => {
-  //         //expect object with key status: 'logged in' OR 'failed login'
-  //         if (resObj.status === 'logged in') {
-  //           //set loggedInStatus to their id number (give them a cookie stretch goal)
-  //           props.loggedIn(resObj.userId);
-  //           //navigate to home with their loggedIn cookie in place
-  //           window.location.href = path.resolve(__dirName, './Home.jsx');
-  //         } else if (resObj.status === 'failed login') {
-  //           //change state of 'invalidLogin to true & reveal a div with 'invalid username or passowrd displayed
-  //           setShowInvalidLogin(true);
-  //         } else {
-  //           //error! neither logged in NOR failed to login!
-  //           throw new Error();
-  //         }
-  //       })
-  //       .catch(err => {
-  //         console.log('retrival of Login Attempt failed: ', err);
-  //       });
-  //   } else {
-  //     //-->new USER selected
-  //     const url = path.resolve(__dirName, '/api/user/newuser');
-  //     await fetch('dummy', {
-  //       //-->/api/user/newuser
-  //       method: 'POST',
-  //       body: JSON.stringify({
-  //         username: un,
-  //         password: pw,
-  //       }),
-  //     })
-  //       .then(res => {
-  //         res.json();
-  //       })
-  //       .then(resObj => {
-  //         //expect object with key status: 'NEW logged in' OR 'failed login'
-  //         if (resObj.status === 'logged in') {
-  //           //set loggedInStatus to their id number (give them a cookie stretch goal)
-  //           props.loggedIn(resObj.userId);
-  //           //navigate to home with their loggedIn cookie in place
-  //           window.location.href = path.resolve(__dirName, './Home.jsx');
-  //         } else if (resObj.status === 'failed signup') {
-  //           //change state of 'invalidLogin to true & reveal a div with 'invalid username or passowrd displayed
-  //           setShowInvalidLogin(true);
-  //         } else {
-  //           //error! neither logged in NOR failed to login!
-  //           throw new Error();
-  //         }
-  //       })
-  //       .catch(err => {
-  //         console.log('retrieval of SignUp failed: ', err);
-  //       });
-  //   }
-  // };
   const handleLogin = async e => {
     e.preventDefault();
     if (username === '' || password === '') return;
-    const request = {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username, password }),
-    };
-    const res = await fetch('/api/user/login', request);
-    const data = await res.json();
-    console.log(data);
-    if (data.message !== 'Login successful!') {
-      alert('Unsuccessful login attempt');
-    } else {
-      userDispatch({ type: userStateActions.LOGIN, payload: username });
-    }
-    setUsername('');
-    setPassword('');
+    userDispatch({ type: userStateActions.LOGIN });
   };
 
   useEffect(() => {
-    const request = {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username, password }),
-    };
-    fetch('/api/user/login', request)
-      .then(res => res.json())
-      .then(data => {
-        console.log(data);
-        if (data.message === 'Login successful!') {
-          userDispatch({ type: userStateActions.LOGIN, payload: username });
-        }
-        setUsername('');
-        setPassword('');
-      });
-  }, []);
+    switch (userState.loading) {
+      case 'login': {
+        console.log('attempting login');
+        const request = {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password }),
+        };
+        fetch('/api/user/login', request)
+          .then(res => res.json())
+          .then(data => {
+            console.log(data);
+            if (data.message !== 'Login successful!') {
+              setShowInvalidLogin(true);
+            } else {
+              userDispatch({
+                type: userStateActions.LOGIN_SUCCESS,
+                payload: username,
+              });
+            }
+            setUsername('');
+            setPassword('');
+          });
+        break;
+      }
+
+      default:
+        break;
+    }
+  }, [userState.loading]);
 
   return (
     <div className='wrapper'>
