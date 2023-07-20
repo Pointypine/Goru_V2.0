@@ -58,20 +58,6 @@ postController.makePost = async (req, res, next) => {
     languageid,
     comment,
   );
-  // {
-  //   "title": "Youtube",
-  //   "tech_id": 4,
-  //   "uploader_id": 0,
-  //   "typeReview": false,
-  //   "typeAdvice": false,
-  //   "typeCodeSnippet": false,
-  //   "typeHelpOffer": false,
-  //   "languageid": 5,
-  //   "comment": "hello",
-  //   "image": "hello"
-  // }
-  // retreive tech id, uploader id, and language id
-  // code
 
   try {
     // Add the post to the DB
@@ -101,21 +87,7 @@ postController.makePost = async (req, res, next) => {
     });
   }
 };
-// await db.query(
-//   `INSERT INTO posts (title, tech, uploader, type_review, type_advice, type_code_snippet, type_help_offer, language, comment) 
-//   VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)`,
-//   [
-//     title,
-//     tech_id,
-//     uploader_id,
-//     typeReview,
-//     typeAdvice,
-//     typeCodeSnippet,
-//     typeHelpOffer,
-//     languageid,
-//     comment,
-//   ],
-// );
+
 postController.editPost = async (req, res, next) => {
   // An authorized/authenticated user wants to edit the post saved to res.locals.postRequest.
   // Edit the post by database ID

@@ -145,7 +145,7 @@ const Comments = () => {
             <div>{item.title}</div>
             <div className="details">
               <p className="username">{item.username}</p>
-              <p className="tags">Posted by: Steve</p>
+              <p className="tags">Posted by: </p>
             </div>
           </div>
         </div>
