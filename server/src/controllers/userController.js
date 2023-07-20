@@ -78,9 +78,12 @@ userController.endSession = (req, res, next) => {
 
 // works with checking hashed pw
 userController.authenticate = async (req, res, next) => {
+  console.log(req.cookies)
+
   // If they have a valid session already, next()
   if (req.cookies.SSID) return next();
 
+  //need to store sessions in data base. need to compare ssid with val in database
   // If they don't have a valid session, check req.body for username + password
   const { username, password } = req.body;
   // Hash salt + Pwd and check database. If valid, next.
@@ -93,7 +96,7 @@ userController.authenticate = async (req, res, next) => {
       WHERE name = $1`,
       [username],
     );
-    // if user exists error
+    // if user exists error    
     if (userResult.rows.length === 0) {
       return next({
         log: 'usercontroller.authenticate: Invalid username or password',
@@ -113,12 +116,11 @@ userController.authenticate = async (req, res, next) => {
       });
     }
 
-    console.log('passwords match!');
+    console.log('passwords match!')
 
     res.locals.userId = userResult.rows[0].user_id;
 
-    console.log('UserId saved');
-
+    console.log('UserId saved');    
     return next();
   } catch (err) {
     console.log('Error while authenticating user:', err);
@@ -132,8 +134,8 @@ userController.authenticate = async (req, res, next) => {
 
 userController.authorizeEdit = (req, res, next) => {
   // Here to edit or delete. Verify that they have a valid session and that User_ID is the author of req/params/id. If not, error.
-  const postAuthorId = req.locals.postRequest.userId;
-  if (req.cookies('SSID') === postAuthorId) {
+  const postAuthorId = req.locals.postRequest.userId;  
+  if (req.cookies('SSID') === postAuthorId || res.cookies('SSID') === postAuthorId) {
     // User is authorized to edit or delete their own post
     next();
   } else {
