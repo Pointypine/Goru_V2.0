@@ -1,4 +1,4 @@
-import React, { useRef, useContext, useEffect } from 'react';
+import React, { useRef, useContext, useState } from 'react';
 import { Button, TextField } from '@mui/material';
 import {
   DispatchContext as OverlayDispatchContext,
@@ -8,27 +8,32 @@ import {
 export default function SearchBar(props) {
   const query = useRef();
   const dispatch = useContext(OverlayDispatchContext);
+
+  
+
   const handleSearch = async e => {
     // const dispatch = useContext(OverlayDispatchContext); // you may need to import the context
     // which may mean we want the contexts to be in a separate file to import in home as well
 
+    
     e.preventDefault();
     let queryVal = query.current.value;
     queryVal = queryVal.replace(/\s/g, '+');
     console.log('queryVal', queryVal);
-    // fetch(`/api/tech/search/?keywords=${queryVal}`,
+    //clear form ref
+
     const fetchData = await fetch(`/api/tech/search/?keywords=${queryVal}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
       },
     });
+    query.current.value = ''
 
     if (fetchData.status !== 200) {
       return 'This was an error in the fetch';
     }
     const data = await fetchData.json();
-    console.log('data', data);
 
     // subscribe the search bar to the dispatch context from the home
     dispatch({ type: 'NEW_DATA', payload: data });
@@ -37,16 +42,15 @@ export default function SearchBar(props) {
   };
 
   return (
-    <form onSubmit={handleSearch} className='search-bar'>
+    <form onSubmit={handleSearch}  className='search-bar'>
       <TextField
         className='search-bar'
-        label='Search apis'
-        variant='outlined'
-        placeholder='Search for Api...'
-        required={true}
+        label='Search Apis'
+        variant='standard'
         inputRef={query}
       />
-      <Button className='searchBtn' variant='outlined' type='submit'>
+      <Button className='searchBtn' variant='outlined' type='submit' 
+      >
         Search
       </Button>
     </form>

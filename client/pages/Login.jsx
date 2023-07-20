@@ -1,8 +1,7 @@
 import React, { useEffect, useState, useContext } from 'react';
 import ReactDOM from 'react';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Route, Routes, useNavigate } from 'react-router-dom';
 //add containers and requirements for JS
-import Navbar from '../components/Navbar.jsx';
 
 import { UserDispatchContext, UserContext } from '../contexts/contexts.jsx';
 import { userStateActions } from '../reducers/userReducers.jsx';
@@ -15,6 +14,8 @@ const Login = props => {
 
   const userDispatch = useContext(UserDispatchContext);
   const userState = useContext(UserContext);
+
+  const navigate = useNavigate();
 
   const handleLogin = async e => {
     e.preventDefault();
@@ -57,6 +58,7 @@ const Login = props => {
   return (
     <div className='wrapper'>
       <div className='body2'>
+        {userState.newUser && <h3>New user successfully created!</h3>}
         <div className='form_contents'>
           <div className='login_form_container'>
             <form className='login_form'>
@@ -79,7 +81,12 @@ const Login = props => {
                   setPassword(e.target.value);
                 }}></input>
               <label>New User?</label>
-              <input type='checkbox' value='new_user'></input>
+              <button
+                onClick={() => {
+                  navigate('/signup');
+                }}>
+                Sign up
+              </button>
             </form>
           </div>
         </div>
