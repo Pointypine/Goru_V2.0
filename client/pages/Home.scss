@@ -14,7 +14,6 @@ $color5: #d5bdaf;
   display: flex;
   justify-content: center;
 }
-
 .homeHead {
   display: inline-flex;
   background-color: purple;
@@ -83,8 +82,11 @@ $color5: #d5bdaf;
 }
 
 .exitButton {
+  float:right;
   top: 0;
   right: 0;
+  width: 20px;
+  height: 20px;
 }
 
 .formGroup-2 {

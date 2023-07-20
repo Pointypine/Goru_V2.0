@@ -142,7 +142,8 @@ const Comments = () => {
             onClick={e => {
               e.preventDefault();
               dispatch({ type: actions.EXPAND_ACCORDION, payload: index });
-            }}>
+            }}
+          >
             <div>{item.title}</div>
             <div className='details'>
               <p className='username'>{item.username}</p>
@@ -170,9 +171,9 @@ const Comments = () => {
             <MainHeader />
             <div className='input-container'>
               <input
-                type='text'
-                className='input-bar'
-                placeholder='Search APIs...'
+                type="text"
+                className="input-bar"
+                placeholder="Search APIs..."
               />
             </div>
             <div className='accordion'>{comments}</div>
