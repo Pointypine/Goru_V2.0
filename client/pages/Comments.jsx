@@ -142,6 +142,15 @@ const Comments = () => {
               dispatch({ type: actions.EXPAND_ACCORDION, payload: index });
             }}
           >
+            <button
+              className="exitButton"
+              // onClick={() => {
+              //   const ele = document.getElementsByClassName("accordion-header-outer")
+              //   ele.remove();
+              // }}
+            >
+              X
+            </button>
             <div>{item.title}</div>
             <div className="details">
               <p className="username">{item.username}</p>
@@ -173,7 +182,7 @@ const Comments = () => {
               <input
                 type="text"
                 className="input-bar"
-                placeholder="Search APIs..."
+                placeholder="Search Posts..."
               />
             </div>
             <div className="accordion">{comments}</div>
