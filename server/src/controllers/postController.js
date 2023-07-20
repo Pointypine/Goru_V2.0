@@ -19,6 +19,7 @@ postController.findPost = async (req, res, next) => {
     }
     console.log('Retrieved post lookup: ', rows[0]);
     res.locals.postRequest = rows[0];
+    console.log('postreq: ', res.locals.postRequest);
     next();
   } catch (err) {
     return next({
@@ -33,13 +34,13 @@ postController.makePost = async (req, res, next) => {
   // An authorized user is posting
   // Get username from cookies/session
   //const { username } = req.cookies;
-  // const uploader_id = req.cookies('SSID');
+  const uploader_id = req.cookies.SSID;
   // Get post from body
   console.log('hello');
   let {
     title,
     tech_id, //needs to be unique to added tech. e.g., youtube api is 1 and google maps api is 2
-    uploader_id, //can stay 0 for now? because no specific user atm, but loaded placeholder user in user table as user_id 0
+    // uploader_id, //can stay 0 for now? because no specific user atm, but loaded placeholder user in user table as user_id 0
     typeReview, //false
     typeAdvice, //false
     typeCodeSnippet, //false
@@ -58,21 +59,6 @@ postController.makePost = async (req, res, next) => {
     languageid,
     comment,
   );
-  // {
-  //   "title": "Youtube",
-  //   "tech_id": 4,
-  //   "uploader_id": 0,
-  //   "typeReview": false,
-  //   "typeAdvice": false,
-  //   "typeCodeSnippet": false,
-  //   "typeHelpOffer": false,
-  //   "languageid": 5,
-  //   "comment": "hello",
-  //   "image": "hello"
-  // }
-  // retreive tech id, uploader id, and language id
-  // code
-
   try {
     // Add the post to the DB
     console.log('Starting insert...');
@@ -101,21 +87,7 @@ postController.makePost = async (req, res, next) => {
     });
   }
 };
-// await db.query(
-//   `INSERT INTO posts (title, tech, uploader, type_review, type_advice, type_code_snippet, type_help_offer, language, comment) 
-//   VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)`,
-//   [
-//     title,
-//     tech_id,
-//     uploader_id,
-//     typeReview,
-//     typeAdvice,
-//     typeCodeSnippet,
-//     typeHelpOffer,
-//     languageid,
-//     comment,
-//   ],
-// );
+
 postController.editPost = async (req, res, next) => {
   // An authorized/authenticated user wants to edit the post saved to res.locals.postRequest.
   // Edit the post by database ID
@@ -129,7 +101,7 @@ postController.editPost = async (req, res, next) => {
     return next();
   } catch (err) {
     return next({
-      log: 'Encountered lookup error in postController.deletePost',
+      log: 'Encountered lookup error in postController.updatePost',
       message: { err: 'Lookup error.' },
     });
   }  
@@ -140,6 +112,7 @@ postController.deletePost = async (req, res, next) => {
   // Delete the post from the database by databaseId.
   const postId = req.params.id
   console.log(postId)
+  console.log('we hit deletePost')
   const lookupText = 'DELETE FROM posts WHERE post_id = $1'
   const lookupVal = [postId]
   try {

@@ -1,12 +1,19 @@
 import React, { useEffect, useState, useReducer } from 'react';
 import ReactDOM from 'react';
 // import helperFunctions from './helper-functions.js';
-import { BrowserRouter, Router, Route, Routes, Navigate } from 'react-router-dom';
+import {
+  BrowserRouter,
+  Router,
+  Route,
+  Routes,
+  Navigate,
+} from 'react-router-dom';
 //add containers and requirements for JS
 import Navbar from './components/Navbar.jsx';
 import Home from './pages/Home.jsx';
 import Comments from './pages/Comments.jsx';
 import Login from './pages/Login.jsx';
+import Signup from './pages/Signup.jsx';
 import Profile from './pages/Profile.jsx';
 
 import { UserContext, UserDispatchContext } from './contexts/contexts.jsx';
@@ -94,6 +101,7 @@ const App = () => {
           <BrowserRouter>
             <Routes>
               <Route path='/' element={<Login />} />
+              <Route path='/signup' element={<Signup />} />
               <Route path='*' element={<Navigate to='/' replace={true} />} />
             </Routes>
           </BrowserRouter>
