@@ -132,6 +132,12 @@ techController.makeTech = async (req, res, next) => {
 // works with one word searches
 techController.searchTech = async (req, res, next) => {
   const { keywords } = req.query;
+
+  if (!keywords) {
+    res.locals.techList = [];
+    return next();
+  }
+
   const searchWords = keywords.split('+').map(word => word.toLowerCase().trim());
   console.log('searchwords', searchWords);
 
@@ -148,16 +154,11 @@ techController.searchTech = async (req, res, next) => {
       console.log('techKeywords', techKeywords);
       return searchWords.every((word) => {
         console.log('word: ', word);
-        return techKeywords.includes(word)
+        return techKeywords.some((techWord) => techWord.startsWith(word));
       });
     });
     console.log('matchingtechs: ', matchingTechs)
-    // matchingTechs = queryResult.rows;
 
-    // res.locals.techList = res.locals.techList || [];
-    // res.locals.techList = res.locals.techList.concat(matchingTechs);
-
-    // Use the spread operator to concatenate the matching techs to the techList
     res.locals.techList = matchingTechs;
 
     return next();
