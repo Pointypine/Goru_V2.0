@@ -2,7 +2,6 @@ import React, { useEffect, useState, useContext } from 'react';
 import ReactDOM from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 //add containers and requirements for JS
-import Navbar from '../components/Navbar.jsx';
 
 import { UserDispatchContext, UserContext } from '../contexts/contexts.jsx';
 import { userStateActions } from '../reducers/userReducers.jsx';
