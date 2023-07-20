@@ -29,9 +29,11 @@ router.post(
   userController.newSession,
   (req, res) => {
     // send back username, maybe contact?, cookie?
-    res
-      .status(200)
-      .json({ message: 'Login successful!', username: res.locals.username });
+    res.status(200).json({
+      message: 'Login successful!',
+      username: res.locals.username,
+      id: res.locals.userId,
+    });
   },
 );
 
@@ -42,14 +44,21 @@ router.get('/signout', userController.endSession, (req, res) => {
 
 // Look up a single user
 router.get(
-  '/:id',
+  '/:name',
   userController.findUser,
   postController.findPostsByUser,
   (req, res) => {
     // res.locals.userRequest && res.locals.postList
     res
       .status(200)
-      .json({ user: res.locals.userRequest, posts: res.locals.postList });
+      .json({
+        user: {
+          username: res.locals.userRequest.name,
+          id: res.locals.userRequest.user_id,
+          contact: res.locals.userRequest.contact,
+        },
+        posts: res.locals.postList,
+      });
   },
 );
 

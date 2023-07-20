@@ -49,9 +49,10 @@ const App = () => {
           .then(data => {
             console.log(data);
             if (data.message === 'Login successful!') {
+              console.log('session verified with user', data.id, data.username);
               userStateDispatch({
                 type: userStateActions.LOGIN_SUCCESS,
-                payload: data.username,
+                payload: { username: data.username, id: data.id },
               });
             } else console.log('No active session');
           })
