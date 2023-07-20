@@ -171,7 +171,7 @@ userController.authorizeEdit = (req, res, next) => {
 };
 
 userController.findUser = async (req, res, next) => {
-  const userName = req.params.id;
+  const userName = req.params.name;
   const lookupText = 'SELECT * FROM users WHERE name = $1';
   const lookupVals = [userName];
   try {
