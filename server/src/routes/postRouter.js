@@ -27,10 +27,10 @@ router.get('/:id', postController.findPost, (req, res) => {
 
 // Update a single post
 router.put(
-  '/:id',
+  '/edit/:id',
   postController.findPost,
-  userController.authenticate,
-  userController.authorizeEdit,
+  // userController.authenticate,
+  // userController.authorizeEdit,
   postController.editPost,
   (req, res) => {
     res.status(200).send();
@@ -39,13 +39,13 @@ router.put(
 
 // Delete a single post
 router.put(
-  '/:id',
+  '/delete/:id',
   postController.findPost,
-  userController.authenticate,
-  userController.authorizeEdit,
+  // userController.authenticate,
+  // userController.authorizeEdit,
   postController.deletePost,
   (req, res) => {
-    res.status(200).send();
+    res.status(200).send(res.locals.updatedRow);
   },
 );
 
