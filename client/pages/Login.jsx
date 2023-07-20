@@ -62,48 +62,53 @@ const Login = props => {
         <div className='form_contents'>
           <div className='login_form_container'>
             <form className='login_form'>
-              <label>Username</label>
-              <input
-                type='text'
-                className='login_username'
-                placeholder='Username'
-                onInput={e => {
-                  setUsername(e.target.value);
-                }}
-                value={username}></input>
-              <label>Password</label>
-              <input
-                type='text'
-                className='login_password'
-                placeholder='Password'
-                value={password}
-                onInput={e => {
-                  setPassword(e.target.value);
-                }}></input>
-              <label>New User?</label>
-              <button
-                onClick={() => {
-                  navigate('/signup');
-                }}>
-                Sign up
-              </button>
+              <div className="usernameLogin">
+                <label>Username</label>
+                <input
+                  type='text'
+                  className='login_username'
+                  placeholder='Username'
+                  onInput={e => {
+                    setUsername(e.target.value);
+                  }}
+                  value={username}></input>
+              </div>
+              <div className="passwordLogin">
+                <label>Password</label>
+                <input
+                  type='text'
+                  className='login_password'
+                  placeholder='Password'
+                  value={password}
+                  onInput={e => {
+                    setPassword(e.target.value);
+                  }}></input>
+              </div>
+              {invalidLogin && (
+                <div className='invalid_login'>Invalid Username Or Password</div>
+              )}
+              <div className='submit_button_box'>
+                <button
+                  className='form_submit_button'
+                  value='Submit'
+                  onClick={e => {
+                    handleLogin(e);
+                  }}>
+                  Login
+                </button>
+              </div>
+
             </form>
           </div>
-        </div>
-        <div className='response_button'>
-          {invalidLogin && (
-            <div className='invalid_login'>Invalid Username Or Password</div>
-          )}
-          <div className='submit_button_box'>
-            <button
-              className='form_submit_button'
-              value='Submit'
-              onClick={e => {
-                handleLogin(e);
-              }}>
-              Submit Login Credentials
-            </button>
-          </div>
+          <div className='response_button'>          
+                <label>New User?</label>
+                    <button
+                      onClick={() => {
+                        navigate('/signup');
+                      }}>
+                      Sign up
+                    </button>
+              </div>
         </div>
       </div>
     </div>

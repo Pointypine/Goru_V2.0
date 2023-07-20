@@ -219,7 +219,7 @@ const MainHeader = () => {
                     onClick={() => {
                       dispatch({ type: actions.EXIT_OVERLAY });
                     }}>
-                    X
+                    X 
                   </button>
                   <Form />
                 </div>
