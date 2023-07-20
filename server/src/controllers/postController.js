@@ -101,18 +101,56 @@ postController.makePost = async (req, res, next) => {
     });
   }
 };
-
-postController.editPost = (req, res, next) => {
+// await db.query(
+//   `INSERT INTO posts (title, tech, uploader, type_review, type_advice, type_code_snippet, type_help_offer, language, comment) 
+//   VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)`,
+//   [
+//     title,
+//     tech_id,
+//     uploader_id,
+//     typeReview,
+//     typeAdvice,
+//     typeCodeSnippet,
+//     typeHelpOffer,
+//     languageid,
+//     comment,
+//   ],
+// );
+postController.editPost = async (req, res, next) => {
   // An authorized/authenticated user wants to edit the post saved to res.locals.postRequest.
   // Edit the post by database ID
-
-  next();
+  const postId = req.params.id
+  const { title, comment } = req.body
+  const lookupText = 'UPDATE posts SET title = $1, comment = $2 WHERE post_id = $3'
+  const lookupVals = [title, comment, postId]
+  try {
+    const { row } = await db.query(lookupText, lookupVals)
+    res.locals.updatedRow = row
+    return next();
+  } catch (err) {
+    return next({
+      log: 'Encountered lookup error in postController.deletePost',
+      message: { err: 'Lookup error.' },
+    });
+  }  
 };
 
-postController.deletePost = (req, res, next) => {
+postController.deletePost = async (req, res, next) => {
   // An authorized/authenticated user wants to delete their post (res.locals.postRequest)
   // Delete the post from the database by databaseId.
-  next();
+  const postId = req.params.id
+  const lookupText = 'DELETE FROM posts WHERE post_id = $1'
+  const lookupVal = [postId]
+  try {
+    const { row } = await db.query(lookupText, lookupVal)
+    res.locals.deletedPost = row
+    return next();
+  } catch (err) {
+    return next({
+      log: 'Encountered lookup error in postController.deletePost',
+      message: { err: 'Lookup error.' },
+    });
+  }
 };
 
 postController.findPostsByUser = async (req, res, next) => {
