@@ -120,6 +120,10 @@ const Home = () => {
   );
 };
 
+const ApiBox = () => {
+  return <div></div>;
+};
+
 const ApisContainer = ({ comments }) => {
   const { apiData } = useContext(OverlayFormContext);
   const renderBox = [];
@@ -154,120 +158,128 @@ const ApisContainer = ({ comments }) => {
   );
 };
 
-const MainHeader = () => {
-  const { visible, apiName, apiURL, apiDescription, apiImageURL } =
-    useContext(OverlayFormContext);
+const HomeHeader = () => {
   const dispatch = useContext(OverlayDispatchContext);
+  return (
+    <div className='home-top-all-content'>
+      <div className='home-top-title-button'>
+        <h2>Cohort: CTRI 17</h2> {/* Hard coded org name */}
+        <div>
+          <img src='./logo.png'></img>
+        </div>
+        <div>
+          <button
+            className='button'
+            onClick={() => {
+              dispatch({ type: actions.SHOW_OVERLAY });
+            }}>
+            + ADD TECH
+          </button>
+        </div>
+      </div>
+      <div className='input-container'>
+        <SearchBar />
+      </div>
+    </div>
+  );
+};
+
+const FormOverlay = () => {
+  const dispatch = useContext(OverlayDispatchContext);
+  const { apiName, apiURL, apiDescription, apiImageURL } =
+    useContext(OverlayFormContext);
+  return (
+    <div className='overlay'>
+      <div className='overlay-content'>
+        <div>
+          <form>
+            <div className='formGroup'>
+              <button
+                className='exitButton'
+                onClick={() => {
+                  dispatch({ type: actions.EXIT });
+                }}>
+                X
+              </button>
+              <h2>Add Tech</h2>
+              <input
+                type='text'
+                className='input-one'
+                placeholder='Add API Name'
+                value={apiName}
+                onChange={event => {
+                  dispatch({
+                    type: actions.NAME_INPUT,
+                    payload: event.target.value,
+                  });
+                }}
+              />
+
+              <input
+                type='text'
+                className='input-one'
+                placeholder='Add API URL'
+                value={apiURL}
+                onChange={event => {
+                  dispatch({
+                    type: actions.URL_INPUT,
+                    payload: event.target.value,
+                  });
+                }}
+              />
+              <textarea
+                className='input-one'
+                rows='3'
+                maxLength='150'
+                placeholder='Add Brief Description'
+                value={apiDescription}
+                onChange={event => {
+                  dispatch({
+                    type: actions.DESCRIPTION_INPUT,
+                    payload: event.target.value,
+                  });
+                }}
+              />
+              <input
+                type='text'
+                className='input-one'
+                placeholder='Add Image URL'
+                value={apiImageURL}
+                onChange={event => {
+                  dispatch({
+                    type: actions.IMAGE_URL_INPUT,
+                    payload: event.target.value,
+                  });
+                }}
+              />
+              <input type='file' className='input-one' accept='image/*' />
+            </div>
+
+            <div className='btn'>
+              <button
+                className='login-button'
+                onClick={e => {
+                  e.preventDefault();
+                  dispatch({ type: actions.SUBMIT });
+                }}>
+                Submit!
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const MainHeader = () => {
+  const { visible } = useContext(OverlayFormContext);
   return (
     <div className='main-header'>
       <div>
         <div className='content'>
-          <div className='home-top-all-content'>
-            <div className='home-top-title-button'>
-              <h2>Cohort: CTRI 17</h2> {/* Hard coded org name */}
-              <div>
-                <img src='./logo.png'></img>
-              </div>
-              <div>
-                <button
-                  className='button'
-                  onClick={() => {
-                    dispatch({ type: actions.SHOW_OVERLAY });
-                  }}>
-                  + ADD TECH
-                </button>
-              </div>
-            </div>
-            <div className='input-container'>
-              <SearchBar />
-            </div>
-          </div>
-          {visible && (
-            <div className='overlay'>
-              <div className='overlay-content'>
-                <div>
-                  <form>
-                    <div className='formGroup'>
-                      <button
-                        className='exitButton'
-                        onClick={() => {
-                          dispatch({ type: actions.EXIT });
-                        }}>
-                        X
-                      </button>
-                      <h2>Add Tech</h2>
-                      <input
-                        type='text'
-                        className='input-one'
-                        placeholder='Add API Name'
-                        value={apiName}
-                        onChange={event => {
-                          dispatch({
-                            type: actions.NAME_INPUT,
-                            payload: event.target.value,
-                          });
-                        }}
-                      />
-
-                      <input
-                        type='text'
-                        className='input-one'
-                        placeholder='Add API URL'
-                        value={apiURL}
-                        onChange={event => {
-                          dispatch({
-                            type: actions.URL_INPUT,
-                            payload: event.target.value,
-                          });
-                        }}
-                      />
-                      <textarea
-                        className='input-one'
-                        rows='3'
-                        maxLength='150'
-                        placeholder='Add Brief Description'
-                        value={apiDescription}
-                        onChange={event => {
-                          dispatch({
-                            type: actions.DESCRIPTION_INPUT,
-                            payload: event.target.value,
-                          });
-                        }}
-                      />
-                      <input
-                        type='text'
-                        className='input-one'
-                        placeholder='Add Image URL'
-                        value={apiImageURL}
-                        onChange={event => {
-                          dispatch({
-                            type: actions.IMAGE_URL_INPUT,
-                            payload: event.target.value,
-                          });
-                        }}
-                      />
-                      <input
-                        type='file'
-                        className='input-one'
-                        accept='image/*'
-                      />
-                    </div>
-
-                    <div className='btn'>
-                      <button
-                        className='login-button'
-                        onClick={e => {
-                          e.preventDefault();
-                          dispatch({ type: actions.SUBMIT });
-                        }}>
-                        Submit!
-                      </button>
-                    </div>
-                  </form>
-                </div>
-              </div>
-            </div>
-          )}
+          <HomeHeader />
+          {visible && <FormOverlay />}
         </div>
       </div>
     </div>

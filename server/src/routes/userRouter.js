@@ -34,7 +34,9 @@ router.post(
   userController.newSession,
   (req, res) => {
     // send back username, maybe contact?, cookie?
-    res.status(200).json({ message: 'Login successful!' });
+    res
+      .status(200)
+      .json({ message: 'Login successful!', username: res.locals.username });
   },
 );
 
