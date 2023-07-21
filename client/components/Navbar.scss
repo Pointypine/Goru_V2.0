@@ -4,13 +4,20 @@ add a universal "background color" to a "variables" pallete scss file AND import
 /*
 add a universal "Text color" to a "variables" pallete scss file AND import that to _appStyles.css}
 */
+
+$color1: #edede9;
+$color2: #d6ccc2;
+$color3: #f5ebe0;
+$color4: #e3d5ca;
+$color5: #d5bdaf;
+
 .Navbar {
   padding: 8px;
   display: flex;
   list-style-type: none;
   justify-content: flex-end;
-  background-color: $third;
-  color: black;
+  background-color: $color5;
+  color: white;
 }
 
 /*

@@ -22,41 +22,43 @@ const router = express.Router();
 
 // Look up a single post /api/post/POST_ID
 router.get('/:id', postController.findPost, (req, res) => {
-  res.status(200).json(res.locals.postRequest);
+  res.status(200).json();
 });
 
 // Update a single post
 router.put(
-  '/:id',
+  '/edit/:id',
   postController.findPost,
-  userController.authenticate,
+  // userController.authenticate,
   userController.authorizeEdit,
   postController.editPost,
   (req, res) => {
     res.status(200).send();
-  }
+  },
 );
 
 // Delete a single post
 router.put(
-  '/:id',
+  '/delete/:id',
   postController.findPost,
-  userController.authenticate,
+  // userController.authenticate,
   userController.authorizeEdit,
   postController.deletePost,
   (req, res) => {
-    res.status(200).send();
-  }
+    res.status(200).send(res.locals.updatedRow);
+  },
 );
 
 // Add new Post to the database
 router.post(
-  '/',
+  '/:id',
   // userController.authenticate, // skipped for testing
   postController.makePost,
+  postController.findPostsByTech,
   (req, res) => {
-    res.sendStatus(200);
-  }
+    console.log('Made it through findPostsByTech');
+    res.status(200).json(res.locals.postList);
+  },
 );
 
 // // Fetch all posts for an 'all posts' display that likely won't be used

@@ -1,73 +1,20 @@
-import React, { useReducer, useEffect, useContext, createContext } from 'react';
-import Navbar from '../components/Navbar.jsx';
-import Apicard from '../components/Apicard.jsx';
-import './Home.scss';
+import React, { useReducer, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import './Home.scss';
 
-const actions = {
-  SHOW_OVERLAY: 'SHOW_OVERLAY',
-  NAME_INPUT: 'NAME_INPUT',
-  URL_INPUT: 'URL_INPUT',
-  IMAGE_URL_INPUT: 'IMAGE_URL_INPUT',
-  DESCRIPTION_INPUT: 'DESCRIPTION_INPUT',
-  SUBMIT: 'SUBMIT',
-  LOAD: 'LOAD',
-  NEW_DATA: 'NEW_DATA',
-  EXIT: 'EXIT',
-};
+import {
+  homePageActions as actions,
+  homePageStateInit as overlayStateInit,
+  homePageReducer as overlayStateReducer,
+} from '../reducers/homePageReducers.jsx';
 
-const overlayStateInit = {
-  visible: false,
-  loading: 'idle',
-  apiName: '',
-  apiUrl: '',
-  apiDescription: '',
-  apiImageUrl: '',
-  apiData: [],
-};
+import {
+  StateContext as OverlayFormContext,
+  DispatchContext as OverlayDispatchContext,
+} from '../contexts/contexts.jsx';
 
-const overlayStateReducer = (state, action) => {
-  switch (action.type) {
-    case actions.SHOW_OVERLAY: {
-      return { ...state, visible: true };
-    }
-    case actions.NAME_INPUT: {
-      return { ...state, apiName: action.payload };
-    }
-    case actions.URL_INPUT: {
-      return { ...state, apiUrl: action.payload };
-    }
-    case actions.IMAGE_URL_INPUT: {
-      return { ...state, apiImageUrl: action.payload };
-    }
-    case actions.DESCRIPTION_INPUT: {
-      return { ...state, apiDescription: action.payload };
-    }
-    case actions.LOAD: {
-      return { ...state, loading: 'load' };
-    }
-    case actions.SUBMIT: {
-      return { ...state, loading: 'submit' };
-    }
-    case actions.NEW_DATA: {
-      return { ...state, loading: 'idle', apiData: action.payload };
-    }
-    case actions.EXIT: {
-      return {
-        ...state,
-        visible: false,
-        apiName: '',
-        apiUrl: '',
-        apiDescription: '',
-        apiImageUrl: '',
-      };
-    }
-    default:
-      return state;
-  }
-};
-const OverlayDispatchContext = createContext();
-const OverlayFormContext = createContext();
+import MainHeader from '../components/HomeComponents/MainHeader.jsx';
+import ApisContainer from '../components/HomeComponents/ApisContainer.jsx';
 
 const Home = () => {
   const [overlayState, overlayDispatch] = useReducer(
@@ -91,7 +38,7 @@ const Home = () => {
 
   // loading state changed: making a fetch IF NOT IDLE
   useEffect(() => {
-    const { loading, apiImageURL, apiDescription, apiName, apiUrl } =
+    const { loading, apiImageUrl, apiDescription, apiName, apiUrl, apiData } =
       overlayState;
     switch (loading) {
       case 'load':
@@ -126,26 +73,35 @@ const Home = () => {
                 },
                 body: JSON.stringify({
                   name: apiName,
-                  link: apiURL,
-
-                  image: apiImageURL,
+                  link: apiUrl,
+                  image: apiImageUrl,
                   typeApi: false,
                   typeFramework: false,
                   typeLibrary: false,
                   description: apiDescription,
-                  keywords: ['maps'],
                 }),
               });
-
-              const data = await response.json();
               console.log('success');
-              console.log('data returned', data);
-              overlayDispatch({ type: actions.NEW_DATA, payload: data });
+              if (response.status === 200) {
+                const data = apiData.slice();
+                data.push({
+                  name: apiName,
+                  link: apiUrl,
+                  image: apiImageUrl,
+                  typeApi: false,
+                  typeFramework: false,
+                  typeLibrary: false,
+                  description: apiDescription,
+                });
+                overlayDispatch({ type: actions.NEW_DATA, payload: data });
+              }
               overlayDispatch({ type: actions.EXIT });
             } catch (err) {
               console.log('Error occurred submitting data to backend');
+              overlayDispatch({ type: actions.FETCH_ERR, payload: err });
             }
           };
+          fetchData();
         }
         break;
 
@@ -157,7 +113,6 @@ const Home = () => {
   return (
     <OverlayDispatchContext.Provider value={overlayDispatch}>
       <OverlayFormContext.Provider value={overlayState}>
-        <Navbar />
         <MainHeader />
         <ApisContainer comments={comments} />
       </OverlayFormContext.Provider>
@@ -165,215 +120,4 @@ const Home = () => {
   );
 };
 
-const ApisContainer = ({ comments }) => {
-  const { apiData } = useContext(OverlayFormContext);
-  const renderBox = () => {
-    return apiData.map((item, index) => {
-      console.log(item);
-      return (
-        <div className='box' key={index}>
-          <div className='image-container'>
-            <img src={item.image_url} alt='Tech' className='api-image' />
-          </div>
-          <div className='api-content'>
-            <a href={item.link} className='tech-item-name'>
-              {item.name}
-            </a>
-            <p>{item.description}</p>
-            <div className='button-comment'>
-              <button onClick={comments} id={item.tech_id}>
-                Posts
-              </button>
-            </div>
-          </div>
-        </div>
-      );
-    });
-  };
-  return (
-    <div className='one'>
-      <div className='scroll-container'>
-        <div className='grid-container'>{renderBox()}</div>
-      </div>
-    </div>
-  );
-};
-
-const MainHeader = () => {
-  const { visible, apiName, apiURL, apiDescription, apiImageURL } =
-    useContext(OverlayFormContext);
-  const dispatch = useContext(OverlayDispatchContext);
-  return (
-    <div className='main-header'>
-      <div>
-        <div className='content'>
-          <div className='home-top-all-content'>
-            <div className='home-top-title-button'>
-              <h2>Cohort: CTRI 17</h2> {/* Hard coded org name */}
-              <div>
-                <img src='./logo.png'></img>
-              </div>
-              <div>
-                <button
-                  className='button'
-                  onClick={() => {
-                    dispatch({ type: actions.SHOW_OVERLAY });
-                  }}
-                >
-                  + ADD TECH
-                </button>
-              </div>
-            </div>
-            <div className='input-container'>
-              <input
-                type='text'
-                className='input-bar-home'
-                placeholder='Search APIs...'
-              />
-            </div>
-          </div>
-          {visible && (
-            <div className='overlay'>
-              <div className='overlay-content'>
-                <div>
-                  <form>
-                    <div className='formGroup'>
-                      <h2>Add Tech</h2>
-                      <input
-                        type='text'
-                        className='input-one'
-                        placeholder='Add API Name'
-                        value={apiName}
-                        onChange={event => {
-                          dispatch({
-                            type: actions.NAME_INPUT,
-                            payload: event.target.value,
-                          });
-                        }}
-                      />
-
-                      <input
-                        type='text'
-                        className='input-one'
-                        placeholder='Add API URL'
-                        value={apiURL}
-                        onChange={event => {
-                          dispatch({
-                            type: actions.URL_INPUT,
-                            payload: event.target.value,
-                          });
-                        }}
-                      />
-                      <textarea
-                        className='input-one'
-                        rows='3'
-                        maxLength='150'
-                        placeholder='Add Brief Description'
-                        value={apiDescription}
-                        onChange={event => {
-                          dispatch({
-                            type: actions.DESCRIPTION_INPUT,
-                            payload: event.target.value,
-                          });
-                        }}
-                      />
-                      <input
-                        type='text'
-                        className='input-one'
-                        placeholder='Add Image URL'
-                        value={apiImageURL}
-                        onChange={event => {
-                          dispatch({
-                            type: actions.IMAGE_URL_INPUT,
-                            payload: event.target.value,
-                          });
-                        }}
-                      />
-                      <input
-                        type='file'
-                        className='input-one'
-                        accept='image/*'
-                      />
-                    </div>
-
-                    <div className='btn'>
-                      <button
-                        className='login-button'
-                        onClick={() => {
-                          dispatch('SUBMIT');
-                        }}
-                      >
-                        Submit!
-                      </button>
-                    </div>
-                  </form>
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-};
-
 export default Home;
-
-// const mockData = [
-//   {
-//     header: 'Google Maps API',
-//     link: 'https://developers.google.com/maps/documentation/javascript/overview',
-//     paragraph:
-//       'Google Maps API allows you to embed maps into your website or application and customize them to fit your needs.',
-//     image: 'https://i.ibb.co/jzvCsB1/Screenshot-2023-07-16-at-3-17-57-PM.png',
-//   },
-//   {
-//     header: 'Google Maps API',
-//     link: 'https://developers.google.com/maps/documentation/javascript/overview',
-//     paragraph:
-//       'Google Maps API allows you to embed maps into your website or application and customize them to fit your needs.',
-//     image: 'https://i.ibb.co/jzvCsB1/Screenshot-2023-07-16-at-3-17-57-PM.png',
-//   },
-//   {
-//     header: 'Google Maps API',
-//     link: 'https://developers.google.com/maps/documentation/javascript/overview',
-//     paragraph:
-//       'Google Maps API allows you to embed maps into your website or application and customize them to fit your needs.',
-//     image: 'https://i.ibb.co/jzvCsB1/Screenshot-2023-07-16-at-3-17-57-PM.png',
-//   },
-//   {
-//     header: 'Google Maps API',
-//     link: 'https://developers.google.com/maps/documentation/javascript/overview',
-//     paragraph:
-//       'Google Maps API allows you to embed maps into your website or application and customize them to fit your needs.',
-//     image: 'https://i.ibb.co/jzvCsB1/Screenshot-2023-07-16-at-3-17-57-PM.png',
-//   },
-//   {
-//     header: 'Google Maps API',
-//     link: 'https://developers.google.com/maps/documentation/javascript/overview',
-//     paragraph:
-//       'Google Maps API allows you to embed maps into your website or application and customize them to fit your needs.',
-//     image: 'https://i.ibb.co/jzvCsB1/Screenshot-2023-07-16-at-3-17-57-PM.png',
-//   },
-//   {
-//     header: 'Google Maps API',
-//     link: 'https://developers.google.com/maps/documentation/javascript/overview',
-//     paragraph:
-//       'Google Maps API allows you to embed maps into your website or application and customize them to fit your needs.',
-//     image: 'https://i.ibb.co/jzvCsB1/Screenshot-2023-07-16-at-3-17-57-PM.png',
-//   },
-//   {
-//     header: 'Google Maps API',
-//     link: 'https://developers.google.com/maps/documentation/javascript/overview',
-//     paragraph:
-//       'Google Maps API allows you to embed maps into your website or application and customize them to fit your needs.',
-//     image: 'https://i.ibb.co/jzvCsB1/Screenshot-2023-07-16-at-3-17-57-PM.png',
-//   },
-//   {
-//     header: 'Google Maps API',
-//     link: 'https://developers.google.com/maps/documentation/javascript/overview',
-//     paragraph:
-//       'Google Maps API allows you to embed maps into your website or application and customize them to fit your needs.',
-//     image: 'https://i.ibb.co/jzvCsB1/Screenshot-2023-07-16-at-3-17-57-PM.png',
-//   },
-// ];

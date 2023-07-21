@@ -19,6 +19,7 @@ postController.findPost = async (req, res, next) => {
     }
     console.log('Retrieved post lookup: ', rows[0]);
     res.locals.postRequest = rows[0];
+    console.log('postreq: ', res.locals.postRequest);
     next();
   } catch (err) {
     return next({
@@ -33,38 +34,37 @@ postController.makePost = async (req, res, next) => {
   // An authorized user is posting
   // Get username from cookies/session
   //const { username } = req.cookies;
-  // const uploader_id = req.cookies('SSID');
+  const uploader_id = req.cookies.SSID;
   // Get post from body
-  // const {
-  //   tech_id,
-  //   typeReview,
-  //   typeAdvice,
-  //   typeCodeSnippet,
-  //   typeHelpOffer,
-  //   languageid,
-  //   title,
-  //   comment,
-  // } = req.body;
-  const sampleUrl = {
-    title: "something",
-    tech_id: 8,
-    uploader_id: 8,
-    typeReview: false,
-    typeAdvice: false,
-    typeCodeSnippet: false,
-    typeHelpOffer: false,
-    languageid: 8,
-    comment: "hello",
-  }
-  // retreive tech id, uploader id, and language id
-  // code
-
+  console.log('hello');
+  let {
+    title,
+    tech_id, //needs to be unique to added tech. e.g., youtube api is 1 and google maps api is 2
+    // uploader_id, //can stay 0 for now? because no specific user atm, but loaded placeholder user in user table as user_id 0
+    typeReview, //false
+    typeAdvice, //false
+    typeCodeSnippet, //false
+    typeHelpOffer, //false
+    languageid, //5 for javascript
+    comment,
+  } = req.body;
+  console.log(
+    title,
+    tech_id,
+    uploader_id,
+    typeReview,
+    typeAdvice,
+    typeCodeSnippet,
+    typeHelpOffer,
+    languageid,
+    comment,
+  );
   try {
     // Add the post to the DB
-    console.log('trying to post to db')
-    db.query(
+    console.log('Starting insert...');
+    await db.query(
       `INSERT INTO posts (title, tech, uploader, type_review, type_advice, type_code_snippet, type_help_offer, language, comment) 
-      VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)`,
+      VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)`,
       [
         title,
         tech_id,
@@ -75,26 +75,56 @@ postController.makePost = async (req, res, next) => {
         typeHelpOffer,
         languageid,
         comment,
-      ]
+      ],
     );
     // This could get PostId for confirmation and potentially better communication w/ front end
+    console.log('Insert success');
     return next();
   } catch (err) {
-    return next('error');
+    return next({
+      log: 'Encountered insert error in postController.makePost',
+      message: { err: 'Insert error.' },
+    });
   }
 };
 
-postController.editPost = (req, res, next) => {
+postController.editPost = async (req, res, next) => {
   // An authorized/authenticated user wants to edit the post saved to res.locals.postRequest.
   // Edit the post by database ID
-
-  next();
+  const postId = req.params.id
+  const { title, comment } = req.body
+  const lookupText = 'UPDATE posts SET title = $1, comment = $2 WHERE post_id = $3'
+  const lookupVals = [title, comment, postId]
+  try {
+    const { row } = await db.query(lookupText, lookupVals)
+    res.locals.updatedRow = row
+    return next();
+  } catch (err) {
+    return next({
+      log: 'Encountered lookup error in postController.updatePost',
+      message: { err: 'Lookup error.' },
+    });
+  }  
 };
 
-postController.deletePost = (req, res, next) => {
+postController.deletePost = async (req, res, next) => {
   // An authorized/authenticated user wants to delete their post (res.locals.postRequest)
   // Delete the post from the database by databaseId.
-  next();
+  const postId = req.params.id
+  console.log(postId)
+  console.log('we hit deletePost')
+  const lookupText = 'DELETE FROM posts WHERE post_id = $1'
+  const lookupVal = [postId]
+  try {
+    const { row } = await db.query(lookupText, lookupVal)
+    res.locals.deletedPost = row
+    return next();
+  } catch (err) {
+    return next({
+      log: 'Encountered lookup error in postController.deletePost',
+      message: { err: 'Lookup error.' },
+    });
+  }
 };
 
 postController.findPostsByUser = async (req, res, next) => {
@@ -121,13 +151,15 @@ postController.findPostsByTech = async (req, res, next) => {
   // Get all post with req.params.id == techId
   // Attach to res.locals.postList;
   const techId = req.params.id;
+  console.log('TechID from route params: ', techId);
   const lookupText = 'SELECT * FROM posts WHERE tech = $1';
   const lookupVals = [techId];
   try {
+    console.log('Starting lookup...');
     const { rows } = await db.query(lookupText, lookupVals);
     // console.log('Retrieved post lookup: ', rows);
     res.locals.postList = rows;
-    next();
+    return next();
   } catch (err) {
     return next({
       log: 'Encountered lookup error in postController.findPostsByTech',

@@ -1,109 +1,122 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import ReactDOM from 'react';
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes, useNavigate } from 'react-router-dom';
 //add containers and requirements for JS
-import Navbar from '../components/Navbar.jsx'
 
-const Login = (props) => {
+import { UserDispatchContext, UserContext } from '../contexts/contexts.jsx';
+import { userStateActions } from '../reducers/userReducers.jsx';
+
+const Login = props => {
   //create a state of invalid usernmae/passowrd initialixed to false
   const [invalidLogin, setShowInvalidLogin] = useState(false);
-  
-  //when someone puts in their form info, handle a login request
-  const handleLogin = async (e) => {
-    console.log("Event Data: ", e);
-    //make a fetch request to the server to post a username and password login
-    const un = e.target.username;
-    const pw = e.target.password;
-    //check if new user is toggled
-    const newUser = e.target.new_user;
-    if (!newUser) { //-->login request (NOT a new user)
-      const url = path.resolve(__dirName, '/api/user/login')
-      //if good match, post back the home page with access to create an api
-      //else bad match, post back a toggle which shows div "username or password invalid"
-      await fetch ( 'dummy', {
-        method: "POST",
-        body: JSON.stringify({
-          username: un,
-          password: pw,
-        }),
-      }).then (res => {
-        //convert with json
-        res.json();
-      }).then (resObj => {
-        //expect object with key status: 'logged in' OR 'failed login'
-        if (resObj.status === 'logged in') {
-          //set loggedInStatus to their id number (give them a cookie stretch goal)
-          props.loggedIn(resObj.userId);
-          //navigate to home with their loggedIn cookie in place
-          window.location.href = path.resolve(__dirName, './Home.jsx');
-        } else if  (resObj.status === 'failed login') {
-          //change state of 'invalidLogin to true & reveal a div with 'invalid username or passowrd displayed
-          setShowInvalidLogin(true);
-        } else {
-          //error! neither logged in NOR failed to login!
-          throw new Error
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+
+  const userDispatch = useContext(UserDispatchContext);
+  const userState = useContext(UserContext);
+
+  const navigate = useNavigate();
+
+  const handleLogin = async e => {
+    e.preventDefault();
+    if (username === '' || password === '') return;
+    userDispatch({ type: userStateActions.LOGIN });
+  };
+
+  useEffect(() => {
+    switch (userState.loading) {
+      case 'login': {
+        console.log('attempting login');
+        const request = {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password }),
         };
-      }).catch (err => {
-        console.log('retrival of Login Attempt failed: ', err)
-      })
-    } else { //-->new USER selected
-      const url = path.resolve(__dirName, '/api/user/newuser');
-      await fetch ('dummy', { //-->/api/user/newuser
-        method: "POST",
-        body: JSON.stringify({
-          username: un,
-          password: pw,
-        }),
-      }).then (res => {
-        res.json();
-      }) .then (resObj => {
-        //expect object with key status: 'NEW logged in' OR 'failed login'
-        if (resObj.status === 'logged in') {
-          //set loggedInStatus to their id number (give them a cookie stretch goal)
-          props.loggedIn(resObj.userId);
-          //navigate to home with their loggedIn cookie in place
-          window.location.href = path.resolve(__dirName, './Home.jsx');
-        } else if  (resObj.status === 'failed signup') {
-          //change state of 'invalidLogin to true & reveal a div with 'invalid username or passowrd displayed
-          setShowInvalidLogin(true);
-        } else {
-          //error! neither logged in NOR failed to login!
-          throw new Error
-        };
-      }).catch (err => {
-        console.log('retrieval of SignUp failed: ', err)
-      })
+        fetch('/api/user/login', request)
+          .then(res => res.json())
+          .then(data => {
+            console.log(data);
+            if (data.message !== 'Login successful!') {
+              setShowInvalidLogin(true);
+            } else {
+              userDispatch({
+                type: userStateActions.LOGIN_SUCCESS,
+                payload: { username, id: data.id },
+              });
+            }
+            setUsername('');
+            setPassword('');
+          });
+        break;
+      }
+
+      default:
+        break;
     }
-  }
-  
+  }, [userState.loading]);
+
   return (
     <div className='wrapper'>
-      <Navbar />
-      <div className="body2">
-        <div className="form_contents">
-          <div className="login_form_container">
+      <div className='body2'>
+        {userState.newUser && <h3>New user successfully created!</h3>}
+        <div className='form_contents'>
+          <div className='login_form_container'>
             <form className='login_form'>
-              <label>Username</label>
-              <input type='text' className='login_username' placeholder='Username' value='username'></input>
-              <label>Password</label>
-              <input type='text' className='login_password' placeholder='Password' value='password'></input>
-              <label>New User?</label>
-              <input type="radio" value='new_user'></input>
+              <div className='usernameLogin'>
+                <label>Username</label>
+                <input
+                  type='text'
+                  className='login_username'
+                  placeholder='Username'
+                  onInput={e => {
+                    setUsername(e.target.value);
+                  }}
+                  value={username}></input>
+              </div>
+              <div className='passwordLogin'>
+                <label>Password</label>
+                <input
+                  type='password'
+                  className='login_password'
+                  placeholder='Password'
+                  value={password}
+                  onInput={e => {
+                    setPassword(e.target.value);
+                  }}></input>
+              </div>
+              {invalidLogin && (
+                <div className='invalid_login'>
+                  Invalid Username Or Password
+                </div>
+              )}
+              <div className='submit_button_box'>
+                <button
+                  className='form_submit_button'
+                  value='Submit'
+                  onClick={e => {
+                    handleLogin(e);
+                  }}>
+                  Login
+                </button>
+              </div>
             </form>
           </div>
-        </div>
           <div className='response_button'>
-            {invalidLogin && (<div className='invalid_login'>Invalid Username Or Password</div>)}
-            <div className="submit_button_box">
-              <button className="form_submit_button" value="Submit" onClick= {(e) => {handleLogin(e)}}>Submit Login Credentials</button>
-            </div>
+            <label>New User?</label>
+            <button
+              onClick={() => {
+                navigate('/signup');
+              }}>
+              Sign up
+            </button>
           </div>
         </div>
+      </div>
     </div>
-  )
-}
+  );
+};
 
-export default Login
+export default Login;
 
 /* 
 

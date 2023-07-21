@@ -7,20 +7,23 @@ const userController = require('../controllers/userController');
 const router = express.Router();
 
 // Search for tech with at '/tech/search?keywords=XXXX' on 'req.query.keywords'
+// works with single search word
 router.get(
   '/search',
-  techController.searchTech, //
+  techController.searchTech,
   (req, res) => {
     res.status(200).json(res.locals.techList);
   }
 );
 
 // Look up all posts for a single tech
+// havent touched but works i think
 router.get('/posts/:id', postController.findPostsByTech, (req, res) => {
   res.status(200).json(res.locals.postList);
 });
 
 // Add new Tech to the database
+// works
 router.post(
   '/',
   // userController.authenticate, // ignored to test makeTech
@@ -31,6 +34,7 @@ router.post(
 );
 
 // Look up a single tech
+//havent touched
 router.get(
   '/:id',
   techController.findTech,
@@ -45,6 +49,7 @@ router.get(
 );
 
 // Fetch all tech for home page display
+// works
 router.get(
   '/',
   techController.getAllTech, // DONE
@@ -53,5 +58,12 @@ router.get(
     res.status(200).json(res.locals.techList);
   }
 );
+
+router.delete('/:id', 
+  techController.deleteTech, 
+  (req, res) => {
+    res.sendStatus(200);
+});
+
 
 module.exports = router;
