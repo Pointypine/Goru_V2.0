@@ -62,7 +62,7 @@ const Login = props => {
         <div className='form_contents'>
           <div className='login_form_container'>
             <form className='login_form'>
-              <div className="usernameLogin">
+              <div className='usernameLogin'>
                 <label>Username</label>
                 <input
                   type='text'
@@ -73,10 +73,10 @@ const Login = props => {
                   }}
                   value={username}></input>
               </div>
-              <div className="passwordLogin">
+              <div className='passwordLogin'>
                 <label>Password</label>
                 <input
-                  type='text'
+                  type='password'
                   className='login_password'
                   placeholder='Password'
                   value={password}
@@ -85,7 +85,9 @@ const Login = props => {
                   }}></input>
               </div>
               {invalidLogin && (
-                <div className='invalid_login'>Invalid Username Or Password</div>
+                <div className='invalid_login'>
+                  Invalid Username Or Password
+                </div>
               )}
               <div className='submit_button_box'>
                 <button
@@ -97,18 +99,17 @@ const Login = props => {
                   Login
                 </button>
               </div>
-
             </form>
           </div>
-          <div className='response_button'>          
-                <label>New User?</label>
-                    <button
-                      onClick={() => {
-                        navigate('/signup');
-                      }}>
-                      Sign up
-                    </button>
-              </div>
+          <div className='response_button'>
+            <label>New User?</label>
+            <button
+              onClick={() => {
+                navigate('/signup');
+              }}>
+              Sign up
+            </button>
+          </div>
         </div>
       </div>
     </div>

@@ -87,7 +87,7 @@ const Signup = () => {
           }}
         />
         <input
-          type='text'
+          type='password'
           placeholder='Password'
           value={password}
           onInput={e => {
